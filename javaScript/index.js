@@ -204,21 +204,60 @@ const fetchLogs = async () => {
         });
 
         // Search and Map Handling
-        const map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-        const marker = L.marker([51.5, -0.09]).addTo(map);
+        // Initialize the map
+var map = L.map('map').setView([11.77528, 124.88611], 13);
 
-        document.getElementById("searchLocationBtn").addEventListener("click", () => {
-            const location = document.getElementById("location").value;
-            if (!location) return alert("Please enter a location to search.");
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const { lat, lon } = data[0];
-                        map.setView([lat, lon], 13);
-                        L.marker([lat, lon]).addTo(map).bindPopup(`<b>${location}</b>`).openPopup();
-                    } else alert("Location not found. Please try another search.");
-                })
-                .catch(error => console.error("Error with geocoding request:", error));
-        });         
+// Add OpenStreetMap tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+var defaultLocation = [11.77528, 124.88611];
+var marker = L.marker(defaultLocation).addTo(map);
+marker.bindPopup("You are here!").openPopup();
+
+
+
+
+// Function to search for a location
+function searchLocation(query) {
+    var url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
+    document.getElementById('loading').style.display = 'block';
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            if (data.length > 0) {
+                var lat = data[0].lat;
+                var lon = data[0].lon;
+                map.setView([lat, lon], 13);
+                map.removeLayer(marker);
+                
+                // Add new marker at the searched location
+                marker = L.marker([lat, lon]).addTo(map);
+                marker.bindPopup(`<b>${data[0].display_name}</b>`).openPopup();
+                map.invalidateSize();
+            } else {
+                alert("Location not found. Try again!");
+            }
+        })
+        .catch(error => {
+            document.getElementById('loading').style.display = 'none';
+            console.error("Error:", error);
+            alert("Failed to retrieve location information.");
+        });
+}
+
+
+// Event listener for search button
+document.getElementById('searchLocationBtn').addEventListener('click', function() {
+    var query = document.getElementById('location').value;
+    if (query) {
+        searchLocation(query);
+    } else {
+        alert("Please enter a location.");
+    }
+});
