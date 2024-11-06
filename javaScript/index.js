@@ -42,7 +42,7 @@ notificationButton.addEventListener("click", () => {
 const fetchLogs = async () => {
     try {
         // Send request to the server to retrieve logs
-        const response = await fetch('https://yadao-web-system.onrender.com/logs');
+        const response = await fetch('https://yadao-web-system-server.onrender.com/logs');
         if (!response.ok) throw new Error('Failed to fetch logs'); // Error handling if response fails
         const logs = await response.json(); // Parse logs from JSON format
         const logEntries = logs.data || logs; // Access log entries directly or from the data field
@@ -92,7 +92,7 @@ const fetchLogs = async () => {
 
     //Send notification to webhook
     function sendWebhookNotification(email) {
-        const serverURL = 'https://yadao-web-system.onrender.com/login'; 
+        const serverURL = 'https://yadao-web-system-server.onrender.com/login'; 
         const payload = { email: email, timestamp: new Date().toISOString(),message:"User Successfully Login!"};
 
     fetch(serverURL, {
