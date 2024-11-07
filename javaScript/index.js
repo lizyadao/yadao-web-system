@@ -22,6 +22,7 @@ const signupForm = document.getElementById("signupForm");
 // Notification button functionality
 const notificationButton = document.getElementById("notificationButton");
 const notificationsContainer = document.getElementById("notifications");
+const notificationList = document.getElementById("notificationList");
 
 // Array to hold notification messages
 const notifications = [];
@@ -55,6 +56,9 @@ notificationButton.addEventListener("click", () => {
 //Fetch Data from Webhook
 const fetchLogs = async () => {
     try {
+        // Display the notification list before loading new notifications
+        notificationList.style.display = 'block';
+
         // Send request to the server to retrieve logs
         const response = await fetch('https://yadao-web-system-server.onrender.com/logs');
         if (!response.ok) throw new Error('Failed to fetch logs'); // Error handling if response fails

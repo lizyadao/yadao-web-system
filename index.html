@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login & Sign-Up with Map Integration</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
@@ -129,13 +129,14 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 12px;
+            display: none;
         }
         .map-container {
             flex: 1;
             margin-left: 16px;
         }
         #map {
-            width: 80%; /* Adjust as needed */
+            width: 90%; /* Adjust as needed */
             height: 350px; /* Adjust as needed */
             background-color: #e0e0e0; /* Optional: background for visibility */
             margin-top: 20px; /* Adds some spacing above the map */
@@ -161,17 +162,64 @@
             width: 80px;
             margin-left: 50px;
         }
+
+        @media screen and (max-width: 600px) {
+            #loginForm{
+                width: 85% !important; /* Adjust to fit mobile view */
+                padding: 20px; /* Reduce padding for smaller screen */
+            }
+            #forgotPasswordLink, h2{
+                font-size: 12px;
+            }
+            #switchMessage{
+                font-size: 10px;
+            }
+            #logout{
+                width: 45px;
+                height: 30px;
+                font-size: 7px;
+                margin-left: 25px;
+                padding: 0 0;
+            }
+            #notificationButton{
+                width: 40px;
+                height: 40px;
+                margin-right: 20px;
+                margin-bottom: 20px;
+            }
+            i{
+                font-size: 20px;
+                margin-bottom: 50px;
+            }
+            h2{
+                margin-right: 8px;
+            }
+            #location{
+                width: 60%;
+            }
+            .search-btn{
+                width: 60px !important;
+                font-size: 10px;
+            }
+            #notificationList{
+                width: 200px;
+            }
+            #notifications{
+                right: 25px;
+            }
+        }
+
         #loginForm input[type="email"],
         #loginForm input[type="password"] {
-    text-align: center; 
-    padding: 10px; 
-    font-size: 16px;
-    width: 100%; 
-    box-sizing: border-box; 
-    margin-bottom: 15px; 
-    border: 1px solid #ccc;
-    border-radius: 5px; /* Rounded corners */
-  }
+        text-align: center; 
+        padding: 10px; 
+        font-size: 16px;
+        width: 100%; 
+        box-sizing: border-box; 
+        margin-bottom: 15px; 
+        border: 1px solid #ccc;
+        border-radius: 5px; /* Rounded corners */
+        }
     </style>
     
 </head>
