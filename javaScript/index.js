@@ -1,40 +1,54 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCBuo7O1EkK64-g6kyRDObL107TOI5CrTI",
-            authDomain: "sia101-activity2-yadao-3e355.firebaseapp.com",
-            projectId: "sia101-activity2-yadao-3e355",
-            storageBucket: "sia101-activity2-yadao-3e355.appspot.com",
-            messagingSenderId: "272365254099",
-            appId: "1:272365254099:web:4f068fb5a657048a26eb26"
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyCBuo7O1EkK64-g6kyRDObL107TOI5CrTI",
+    authDomain: "sia101-activity2-yadao-3e355.firebaseapp.com",
+    projectId: "sia101-activity2-yadao-3e355",
+    storageBucket: "sia101-activity2-yadao-3e355.appspot.com",
+    messagingSenderId: "272365254099",
+    appId: "1:272365254099:web:4f068fb5a657048a26eb26"
+};
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-        const formTitle = document.getElementById("formTitle");
-        const switchFormLink = document.getElementById("switchFormLink");
-        const loginForm = document.getElementById("loginForm");
-        const signupForm = document.getElementById("signupForm");
+const formTitle = document.getElementById("formTitle");
+const switchFormLink = document.getElementById("switchFormLink");
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
 
 
-        // Notification button functionality
+// Notification button functionality
 const notificationButton = document.getElementById("notificationButton");
 const notificationsContainer = document.getElementById("notifications");
 
 // Array to hold notification messages
 const notifications = [];
 
-// Function to update the notifications display
+//stay on map form after refresh if an email is in localstorage
+document.addEventListener("DOMContentLoaded", () => {
+    const userEmail = localStorage.getItem('userEmail');
+    if (userEmail) {
+      // Display map form and hide login form
+      document.getElementById("loginForm").style.display = "none";
+      signupForm.style.display = "none";
+      switchMessageContainer.style.display = "none";
+      formTitle.style.display = "none";  // Hide the title
+      document.getElementById("searchContainer").style.display = "block";
+    } else {
+      // Show login form by default
+      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("searchContainer").style.display = "none";
+    }
+  });
 
 // Event listener for the notification button
 notificationButton.addEventListener("click", () => {
     notificationsContainer.style.display = notificationsContainer.style.display === 'none' || notificationsContainer.style.display === '' ? 'block' : 'none';
     if (notificationsContainer.style.display === 'block') {
         fetchLogs();
-         // Update notifications when shown
-        
+        // Update notifications when shown
     }
 });
 
@@ -90,10 +104,10 @@ const fetchLogs = async () => {
 
 
 
-    //Send notification to webhook
-    function sendWebhookNotification(email) {
-        const serverURL = 'https://yadao-web-system-server.onrender.com/login'; 
-        const payload = { email: email, timestamp: new Date().toISOString(),message:"User Successfully Login!"};
+//Send notification to webhook
+function sendWebhookNotification(email) {
+    const serverURL = 'https://yadao-web-system-server.onrender.com/login'; 
+    const payload = { email: email, timestamp: new Date().toISOString(),message:"User Successfully Login!"};
 
     fetch(serverURL, {
         method: 'POST',
@@ -109,50 +123,66 @@ const fetchLogs = async () => {
 }
 
 
-        // Function to switch forms
-        function switchForms() {
-            const isLoginFormVisible = loginForm.style.display !== 'none';
+// Function to switch forms
+function switchForms() {
+    const isLoginFormVisible = loginForm.style.display !== 'none';
 
-            loginForm.style.display = isLoginFormVisible ? 'none' : 'block';
-            signupForm.style.display = isLoginFormVisible ? 'block' : 'none';
-            formTitle.innerText = isLoginFormVisible ? "Sign Up" : "Log In";
-            document.getElementById("switchMessage").innerHTML = isLoginFormVisible 
-                ? "Already have an account? <a href='#' id='switchFormLink'>Log in</a>" 
-                : "Don't have an account? <a href='#' id='switchFormLink'>Sign up</a>";
+    // Toggle form visibility
+    loginForm.style.display = isLoginFormVisible ? 'none' : 'block';
+    signupForm.style.display = isLoginFormVisible ? 'block' : 'none';
 
-            // Update the switchFormLink event listener after switching
-            document.getElementById("switchFormLink").addEventListener("click", (event) => {
-                event.preventDefault();
-                switchForms();
-            });
-        }
+    // Update form title and hide it if the form is hidden
+    formTitle.innerText = isLoginFormVisible ? "Sign Up" : "Log In";
+    formTitle.style.display = (loginForm.style.display === 'none' && signupForm.style.display === 'none') ? 'none' : 'block';
 
-        // Initial event listener for form switching
-        switchFormLink.addEventListener("click", (event) => {
-            event.preventDefault();
-            switchForms();
+    // Update the switch message
+    document.getElementById("switchMessage").innerHTML = isLoginFormVisible 
+        ? "Already have an account? <a href='#' id='switchFormLink'>Log in</a>" 
+        : "Don't have an account? <a href='#' id='switchFormLink'>Sign up</a>";
+
+    // Show or hide the switch message based on the form visibility
+    document.getElementById("switchMessageContainer").style.display = isLoginFormVisible ? 'block' : 'none';
+
+    // Update the switchFormLink event listener after switching
+    document.getElementById("switchFormLink").addEventListener("click", (event) => {
+        event.preventDefault();
+        switchForms();
+    });
+}
+
+// Initial event listener for form switching
+switchFormLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    switchForms();
+});
+
+// Login Handling
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+            alert("Logged in successfully!");
+            sendWebhookNotification(email);
+
+            // Store current user email
+            localStorage.setItem('userEmail', email);
+
+            // Show map container and hide forms and title
+            document.getElementById("searchContainer").style.display = "block";
+            loginForm.style.display = "none";
+            signupForm.style.display = "none";
+            switchMessageContainer.style.display = "none";
+            formTitle.style.display = "none";  // Hide the title
+            loginForm.reset();
+        })
+        .catch((error) => {
+            document.getElementById("message").innerText = error.message;
         });
+});
 
-        // Login Handling
-        loginForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then(() => {
-                    alert("Logged in successfully!");
-                    sendWebhookNotification(email);
-                    document.getElementById("searchContainer").style.display = "block";
-                    loginForm.style.display = "none";
-                    signupForm.style.display = "none";
-                    switchMessageContainer.style.display = "none";
-                    loginForm.reset();
-                })
-                .catch((error) => {
-                    document.getElementById("message").innerText = error.message;
-                });
-        });
 
         // Sign-Up Handling
         signupForm.addEventListener("submit", (event) => {
@@ -205,21 +235,13 @@ const fetchLogs = async () => {
 
         // Search and Map Handling
         // Initialize the map
-var map = L.map('map').setView([11.77528, 124.88611], 13);
+const map = L.map('map').setView([11.77528, 124.88611], 13);
 
 // Add OpenStreetMap tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    //attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-
-
-var defaultLocation = [11.77528, 124.88611];
-var marker = L.marker(defaultLocation).addTo(map);
-marker.bindPopup("You are here!").openPopup();
-
-
-
 
 // Function to search for a location
 function searchLocation(query) {
@@ -260,4 +282,12 @@ document.getElementById('searchLocationBtn').addEventListener('click', function(
     } else {
         alert("Please enter a location.");
     }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutButton = document.getElementById("logout");
+    logoutButton.addEventListener("click", () => {
+        localStorage.removeItem('userEmail');
+        location.reload();
+    });
 });

@@ -88,8 +88,10 @@
         /* Notification and Map Styling */
         .search-container {
             width: 100%;
-            display: none;
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .top-bar {
             display: flex;
@@ -109,28 +111,35 @@
             color: #0a0a0a;
         }
         #notifications {
-           
+            position: fixed;
+            top: 70px;
+            right: 50px;
             max-height: 300px;
-            
             overflow-y: auto;
             margin-top: 20px;
             font-size: 14px;
+            border-radius: 10px;
+            z-index: 1000;
         }
         #notificationList {
+            width: 300px;
             background-color: #f9f9f9;
             padding: 10px;
             margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 12px;
         }
         .map-container {
             flex: 1;
             margin-left: 16px;
         }
         #map {
-
-            height: 450px;
-            width: 98%;
+            width: 80%; /* Adjust as needed */
+            height: 350px; /* Adjust as needed */
+            background-color: #e0e0e0; /* Optional: background for visibility */
+            margin-top: 20px; /* Adds some spacing above the map */
+            justify-self: center;
         }
         #signupForm{
             display: none;
@@ -147,6 +156,10 @@
         }
         #searchLocationBtn{
             width: 100px;
+        }
+        #logout {
+            width: 80px;
+            margin-left: 50px;
         }
         #loginForm input[type="email"],
         #loginForm input[type="password"] {
@@ -194,14 +207,14 @@
         <!-- Search and Map Container -->
         <div class="search-container" id="searchContainer">
             <div class="top-bar">
+                <button type="button" id="logout" class="logout">Log Out</button>
                 <h2>Location Search</h2>
-                <button id="notificationButton" class="notification-btn"><i class="fas fa-bell"></i></button>
+                <button type="button" id="notificationButton" class="notification-btn"><i class="fas fa-bell"></i></button>
             </div>
             
             <div id="loading" style="display: none; color: #0055ff; margin-bottom: 50px;"></div>
             <div id="notifications">
-                <ul id="notificationList">
-                </ul>
+                <ul id="notificationList"></ul>
             </div>
 
             <div class="search-bar">
@@ -215,7 +228,7 @@
     <!-- Firebase and Map Integration -->
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="javaScript/index.js"></script>
 </body>
 </html>
