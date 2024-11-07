@@ -282,6 +282,8 @@ function addInitialMarker() {
 addInitialMarker();
 
 // Function to search for a location
+let marker = null; // Declare marker globally to avoid scope issues
+
 function searchLocation(query) {
     var url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
     document.getElementById('loading').style.display = 'block';
@@ -294,22 +296,24 @@ function searchLocation(query) {
                 var lat = data[0].lat;
                 var lon = data[0].lon;
                 map.setView([lat, lon], 13);
-                map.removeLayer(marker);
-                
+
+                // If marker exists, remove it before adding a new one
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
                 // Add new marker at the searched location
                 marker = L.marker([lat, lon]).addTo(map);
                 marker.bindPopup(`<b>${data[0].display_name}</b>`).openPopup();
                 map.invalidateSize();
-            } else {
-                alert("Location not found. Try again!");
-            }
+            } 
         })
         .catch(error => {
             document.getElementById('loading').style.display = 'none';
             console.error("Error:", error);
-            alert("Failed to retrieve location information.");
         });
 }
+
 
 
 // Event listener for search button
