@@ -19,9 +19,10 @@ const loginForm = document.getElementById("loginForm");
 const signupForm = document.getElementById("signupForm");
 
 
+
 // Notification button functionality
 const notificationButton = document.getElementById("notificationButton");
-const notificationsContainer = document.getElementById("notifications");
+//const notificationsContainer = document.getElementById("notifications");
 const notificationList = document.getElementById("notificationList");
 
 // Array to hold notification messages
@@ -44,14 +45,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-// Event listener for the notification button
-notificationButton.addEventListener("click", () => {
-    notificationsContainer.style.display = notificationsContainer.style.display === 'none' || notificationsContainer.style.display === '' ? 'block' : 'none';
-    if (notificationsContainer.style.display === 'block') {
-        fetchLogs();
-        // Update notifications when shown
+// Event listener for the notification button display notification
+document.addEventListener("click", function(event) {
+    var notificationsContainer = document.getElementById('notificationsDropdown');
+    var notificationButton = document.getElementById('notificationButton');
+    var notificationclearButton = document.getElementById('clearNotif-btn');
+
+    // Check if the click is on the notification button
+    if (notificationButton.contains(event.target)) {
+        // Toggle the display of the notifications container
+        notificationsContainer.style.display = 
+            notificationsContainer.style.display === 'none' || notificationsContainer.style.display === '' 
+            ? 'block' 
+            : 'none';
+
+        // If notifications are shown, fetch logs and show the clear button
+        if (notificationsContainer.style.display === 'block') {
+            fetchLogs();
+            notificationclearButton.style.display = "block";  // Show the clear button
+        } else {
+            // Hide the clear button if notifications are hidden
+            notificationclearButton.style.display = "none";
+        }
+    } else if (!notificationsContainer.contains(event.target)) {
+        // Hide notifications and the clear button if click is outside both button and container
+        notificationsContainer.style.display = 'none';
+        notificationclearButton.style.display = "none";  // Hide the clear button
     }
 });
+
+
 
 //Fetch Data from Webhook
 const fetchLogs = async () => {
@@ -237,15 +260,26 @@ loginForm.addEventListener("submit", (event) => {
                 .catch((error) => alert("Error: " + error.message));
         });
 
+       
+
         // Search and Map Handling
+
         // Initialize the map
 const map = L.map('map').setView([11.77528, 124.88611], 13);
 
 // Add OpenStreetMap tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    //attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+function addInitialMarker() {
+    var lat = 11.77528;
+    var lon = 124.88611;
+    
+    var marker = L.marker([lat, lon]).addTo(map);
+    marker.bindPopup("<b>Your current location!</b>").openPopup();
+}
+addInitialMarker();
 
 // Function to search for a location
 function searchLocation(query) {
@@ -289,6 +323,39 @@ document.getElementById('searchLocationBtn').addEventListener('click', function(
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+
+// Function to clear the notification
+function clearNotifications() {
+    const notificationsList = document.getElementById('notificationList'); // Use getElementById
+    const clearButton = document.querySelector('.clear-btn');
+
+    // Check if notificationsList exists
+    if (!notificationsList) {
+        console.error("Notifications list not found");
+        return; // Exit the function if the element is not found
+    }
+
+    // Remove all notifications
+    while (notificationsList.firstChild) {
+        notificationsList.removeChild(notificationsList.firstChild);
+    }
+
+    // Add a message indicating the list is empty
+    const emptyMessage = document.createElement('li');
+    emptyMessage.textContent = 'Notifications are cleared.';
+    emptyMessage.classList.add('empty-message');
+    notificationsList.appendChild(emptyMessage);
+
+    // Hide the clear button after clearing notifications
+    clearButton.style.display = 'none';
+}
+
+// Expose the function to the global scope if needed
+window.clearNotifications = clearNotifications;
+
+
+
+
     const logoutButton = document.getElementById("logout");
     logoutButton.addEventListener("click", () => {
         localStorage.removeItem('userEmail');

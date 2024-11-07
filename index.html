@@ -110,7 +110,7 @@
             cursor: pointer;
             color: #0a0a0a;
         }
-        #notifications {
+        .notifications {
             position: fixed;
             top: 70px;
             right: 50px;
@@ -162,6 +162,9 @@
             width: 80px;
             margin-left: 50px;
         }
+        .clear-btn{
+            display: none;
+        }
 
         @media screen and (max-width: 600px) {
             #loginForm{
@@ -204,7 +207,7 @@
             #notificationList{
                 width: 200px;
             }
-            #notifications{
+            .notifications{
                 right: 25px;
             }
         }
@@ -220,6 +223,7 @@
         border: 1px solid #ccc;
         border-radius: 5px; /* Rounded corners */
         }
+        
     </style>
     
 </head>
@@ -261,9 +265,26 @@
             </div>
             
             <div id="loading" style="display: none; color: #0055ff; margin-bottom: 50px;"></div>
-            <div id="notifications">
-                <ul id="notificationList"></ul>
+            <div class="bell-container">
+                <div class="notifications" id="notificationsDropdown">
+    
+                    <div class="notifications">
+                        <div class="notifications-header"><h3>Notifications</h3></div>
+                        <ul id="notificationList"></ul>
+                        <ul>
+                            <li>
+                                <button class="clear-btn" id="clearNotif-btn" onclick="clearNotifications()">Clear notification</button> 
+                            </li>
+                        </ul>
+
+                        
+
+                    </div>
+                </div>
             </div>
+
+            
+           
 
             <div class="search-bar">
                 <input type="text" id="location" placeholder="Enter a location" required>
